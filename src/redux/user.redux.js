@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {getRedirectPath} from '../utils'
 
 const AUTH_SUCCESS = 'AUTH_SUCCESS'
 const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
@@ -16,9 +17,9 @@ const initState = {
 export function user(state=initState, action) {
   switch(action.type) {
     case REGISTER_SUCCESS:
-      return {...state, msg:'', isAuth: true, ...action.payload}
+      return {...state, msg:'', isAuth: true, redirectTo: getRedirectPath(action.payload), ...action.payload}
     case AUTH_SUCCESS:
-      return {...state, msg:'', isAuth: true, ...action.payload}
+      return {...state, msg:'', isAuth: true, redirectTo: getRedirectPath(action.payload), ...action.payload}
     case LOAD_DATA:
       return {...state, ...action.payload}
     case ERROR_MSG:
@@ -26,6 +27,10 @@ export function user(state=initState, action) {
     default: 
       return state
   }
+}
+
+function loginSuccess(data) {
+  return {type: AUTH_SUCCESS, payload: data}
 }
 
 function registerSuccess(data) {
@@ -37,6 +42,24 @@ function errorMsg(msg) {
   return { msg, type: ERROR_MSG}
 }
 
+// 登录
+export function login({user, pwd}) {
+  if (!user || !pwd) {
+    return errorMsg('用户名密码不能为空')
+  }
+  return dispatch => {
+    axios.post('/user/login', {user, pwd})
+      .then(res => {
+        if (res.status === 200 && res.data.code === 0) {
+          dispatch(loginSuccess(res.data.data))
+        } else {
+          dispatch(errorMsg(res.data.msg))
+        }
+      })
+  }
+}
+
+// 注册
 export function register({user, pwd, repeatPwd, type}) {
   if (!user || !pwd || !type) {
     return errorMsg('用户名密码必须输入')

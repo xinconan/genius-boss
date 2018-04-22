@@ -15,6 +15,12 @@ Router.get('/list', (req, res) => {
   })
 })
 
+// 登录
+Router.post('/login', (req, res) => {
+  const {user, pwd} = req.body;
+  res.json({code:0, data: {user,pwd}})
+})
+
 
 // 注册
 Router.post('/register', (req, res) => {
