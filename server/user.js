@@ -1,8 +1,11 @@
 const express = require('express')
 const utils = require('utility')
+
 const Router = express.Router()
 const models = require('./model')
 const User = models.getModel('user');
+// 过滤不返回的字段
+const filter = {pwd: 0, __v:0}
 
 // 获取用户列表
 Router.get('/list', (req, res) => {
@@ -18,7 +21,14 @@ Router.get('/list', (req, res) => {
 // 登录
 Router.post('/login', (req, res) => {
   const {user, pwd} = req.body;
-  res.json({code:0, data: {user,pwd}})
+  User.findOne({user,pwd: md5Pwd(pwd)}, filter, (err, doc) => {
+    if (!doc) {
+      return res.json({code:1, msg: '用户名或密码错误'})
+    }
+    // 保存cookie
+    res.cookie('userid', doc._id)
+    return res.json({code:0, data: doc})
+  })
 })
 
 
@@ -35,6 +45,7 @@ Router.post('/register', (req, res) => {
         return res.json({code: 1, msg: '服务端错误，请稍后重试'})
       }
       const {user, type, _id} = data
+      // 保存cookie
       res.cookie('userid', _id)
       return res.json({code:0, data: {user, type, _id}})
     })
@@ -43,7 +54,18 @@ Router.post('/register', (req, res) => {
 
 // 获取用户信息
 Router.get('/info', (req, res) => {
-  return res.json({code: 1})
+  const {userid} = req.cookies
+  if (!userid) {
+    return res.json({code: 1})
+  }
+  User.findOne({_id: userid}, filter, (err, doc) => {
+    if(err) {
+      return res.json({code: 1, msg: '服务器错误'})
+    }
+    if (doc) {
+      return res.json({code: 0, data: doc})
+    }
+  })
 })
 
 // 密码md5加密

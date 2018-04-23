@@ -42,6 +42,10 @@ function errorMsg(msg) {
   return { msg, type: ERROR_MSG}
 }
 
+export function loadData(userinfo) {
+  return {type: LOAD_DATA, payload: userinfo}
+}
+
 // 登录
 export function login({user, pwd}) {
   if (!user || !pwd) {
