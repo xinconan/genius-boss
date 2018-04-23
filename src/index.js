@@ -12,6 +12,8 @@ import './index.css';
 import Login from './container/login/login'
 import Register from './container/register/register'
 import User from './container/user/user'
+import BossInfo from './container/bossinfo/bossinfo'
+import GeniusInfo from './container/geniusinfo/geniusinfo'
 import AuthRoute from './components/authRoute/authRoute'
 
 import reducers from './reducer'
@@ -31,6 +33,8 @@ ReactDOM.render((
         <Route path="/login" component={Login}/>
         <Route path="/register" component={Register}/>
         <Route path="/user" component={User}/>
+        <Route path="/bossinfo" component={BossInfo}/>
+        <Route path="/geniusinfo" component={GeniusInfo}/>
       </div>
     </BrowserRouter>
   </Provider>  
