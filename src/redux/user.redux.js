@@ -78,6 +78,15 @@ export function register({user, pwd, repeatPwd, type}) {
 
 // 更新
 export function update(data) {
+  if(data.type === 'boss') {
+    if (!data.desc) {
+      return errorMsg('请输入职位要求')
+    }
+  } else {
+    if(!data.desc) {
+      return errorMsg('请输入个人简介')
+    }
+  }
   return dispatch=> {
     axios.post('/user/update', data)
       .then(res=>{

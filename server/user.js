@@ -9,11 +9,12 @@ const filter = {pwd: 0, __v:0}
 
 // 获取用户列表
 Router.get('/list', (req, res) => {
-  User.find({}, (err, list) => {
+  const { type } = req.query;
+  User.find({type}, filter, (err, list) => {
     if(err) {
       res.json({code: 1, msg: '服务端错误'})
     }else {
-      res.json(list)
+      res.json({code: 0, data: list})
     }
   })
 })
@@ -65,6 +66,22 @@ Router.get('/info', (req, res) => {
     if (doc) {
       return res.json({code: 0, data: doc})
     }
+  })
+})
+
+// 更新用户信息
+Router.post('/update', (req, res) => {
+  const { userid } = req.cookies;
+  if (!userid) {
+    return res.json({code: 1})
+  }
+  const body = req.body;
+  User.findByIdAndUpdate(userid, body, (err, doc) => {
+    const data = Object.assign({}, {
+      user: doc.user,
+      type: doc.type
+    }, body);
+    return res.json({code: 0, data})
   })
 })
 
