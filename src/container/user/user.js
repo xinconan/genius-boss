@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import {Button,List, WhiteSpace, WingBlank} from 'antd-mobile'
 import {Redirect} from 'react-router-dom'
 
+import './user.scss'
+
 @connect(
   state=>state.user
 )
@@ -19,8 +21,8 @@ class User extends React.Component{
         <List renderHeader={()=>'简介'}>
           <Item multipleLine>
             {props.title}
-            {props.desc.split('\n').map(v=><p key={v}>{v}</p>)}
-            {props.money?<p>薪资：{props.money}</p>:null}
+            {props.desc.split('\n').map(v=><p className="sub-desc" key={v}>{v}</p>)}
+            {props.money?<p className="sub-desc">薪资：{props.money}</p>:null}
           </Item>
         </List>
         <WhiteSpace></WhiteSpace>
